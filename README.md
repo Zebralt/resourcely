@@ -27,7 +27,7 @@ resources = rly.from_located_file('resources.yml', near=__file__)
 rly.expand(resources, globals())
 ```
 
-This enables us to import those namespace from an `images` package:
+This enables us to import the defined namespaces from the newfound `images` package:
 
 ```python
 >>> from images import buttons
@@ -37,7 +37,7 @@ This enables us to import those namespace from an `images` package:
 PyQt5.QtCore.QUrl('file:///home/waluigi/only_otters/images/next.png')
 ```
 
-A `Resource` is a simple structure with two fields: a name and a URL. The class has several utility properties to convert the URL to different formats, such as `str and, `QUrl` since we work with PyQt.
+A `Resource` is a simple structure with two fields: a name and a URL. The class has several utility properties to convert the URL to different formats, such as `str` and `QUrl` since we work with PyQt. It also implements [PEP 519](https://www.python.org/dev/peps/pep-0519/).
 
 You can describe a list of resources in 3 ways:
 
@@ -57,7 +57,7 @@ resources:
   - /b/c.png
 ```
 
-The second syntax won't allow you to nest namespaces, but you can do this instead:
+The second syntax won't allow you to nest namespaces, unless you explicitly specify it:
 ```yaml
 resources: # <- Not a key-value pair!
   type: namespace # <- Add this so that the tool knows that it's a namespace
