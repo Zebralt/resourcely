@@ -5,7 +5,7 @@ import pathlib
 import re
 from argparse import Namespace
 from dataclasses import dataclass
-from typing import Union, Any
+from typing import Union, Any, Dict, Optional
 
 # other
 import yaml
@@ -102,7 +102,7 @@ def _parse_dict(resources: dict, prefix=pathlib.Path()) -> Namespace:
     })
 
 
-def load(filepath) -> dict:
+def load(filepath: Union[str, pathlib.Path]) -> dict:
     """Load the resource config file and automatically detects the required loader depending
     on the file extension."""
     strpath = os.fspath(filepath)
@@ -141,19 +141,23 @@ def parse(resources: Union[dict, list], prefix=pathlib.Path()) -> Namespace:
     return parser(resources, prefix=prefix)
 
 
-_TYPE_PARSERS = {
+_TYPE_PARSERS: Dict[type, callable] = {
     list: _parse_list,
     dict: _parse_dict
 }
 
-_EXT_LOADERS = {
+_EXT_LOADERS: Dict[str, callable] = {
     'json': json.load,
     'yml': yaml.safe_load,
     'yaml': yaml.safe_load
 }
 
 
-def from_located_file(filepath='resources.yml', location=None, near=None) -> Namespace:
+def from_located_file(
+    filepath='resources.yml', 
+    location: Optional[str] = None, 
+    near: Optional[str] = None
+) -> Namespace:
     """Load a resource namespace from a file located in the 'location' folder, or in the parent
     folder of the path provided in 'near'."""
 
@@ -172,8 +176,8 @@ def from_located_file(filepath='resources.yml', location=None, near=None) -> Nam
     if near:
         folder = pathlib.Path(near).parent
 
-    data = yaml.safe_load(open(folder / filepath))
-    resources = ensure_field(data, 'resources')
+    data: Dict[str, str] = yaml.safe_load(open(folder / filepath))
+    resources: Dict[str, Union[Resource, Namespace]] = ensure_field(data, 'resources')
     return parse(resources, prefix=folder)
 
 
@@ -184,7 +188,7 @@ def expand(resources: Namespace, context: dict):
         context[key] = value
 
 
-def get_domain_name(url) -> str:
+def get_domain_name(url: str) -> str:
     """Retrieve domain name without protocol prefix or subpath."""
     return re.search(r'https?://([\w.-]+?)(?:/.*)?$', url).groups()[0]
 
