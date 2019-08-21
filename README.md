@@ -1,6 +1,6 @@
 # Resourcely
 
-With minimal code, expose your resource files to the rest of your package as importable namespaces!
+With minimal code, expose your resource folders to the rest of your package as importable namespaces!
 
 In the `images` folder, I store my PNG images. With resourcely, I can add a `resources.yml` file like so:
 
